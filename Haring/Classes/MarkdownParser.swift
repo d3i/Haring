@@ -28,9 +28,9 @@ open class MarkdownParser {
     public let code: MarkdownCode
 
     // MARK: Escaping Elements
-    fileprivate var codeEscaping = MarkdownCodeEscaping()
-    fileprivate var escaping = MarkdownEscaping()
-    fileprivate var unescaping = MarkdownUnescaping()
+    public var codeEscaping = MarkdownCodeEscaping()
+    public var escaping = MarkdownEscaping()
+    public var unescaping = MarkdownUnescaping()
 
     // MARK: Configuration
     /// Enables or disables detection of URLs even without Markdown format
@@ -76,6 +76,19 @@ open class MarkdownParser {
         customElements.remove(at: index)
     }
 
+    open func removeElements(_ elements: [MarkdownElement]) {
+        for element in elements {
+            removeElement(element)
+        }
+    }
+    
+    open func removeElement(_ element: MarkdownElement) {
+        escapingElements = escapingElements.filter { type(of: $0) != type(of: element) }
+        defaultElements = defaultElements.filter { type(of: $0) != type(of: element) }
+        unescapingElements = unescapingElements.filter { type(of: $0) != type(of: element) }
+        customElements = customElements.filter { type(of: $0) != type(of: element) }
+    }
+    
     // MARK: Parsing
     open func parse(_ markdown: String) -> NSAttributedString {
         return parse(NSAttributedString(string: markdown))
